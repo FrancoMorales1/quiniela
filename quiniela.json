@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-12-01T23:40:01.196Z",
+  "resultados": {
+    "Provincia": {
+      "PREVIA": "0673",
+      "PRIMERA": "6163",
+      "MATUTINA": "0689",
+      "VESPERTINA": "5127",
+      "NOCTURNA": "----"
+    },
+    "Ciudad": {
+      "PREVIA": "5309",
+      "PRIMERA": "7614",
+      "MATUTINA": "6117",
+      "VESPERTINA": "8602",
+      "NOCTURNA": "----"
+    }
+  }
+}
