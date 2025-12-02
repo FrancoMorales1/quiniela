@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getQuinielaData, setQuinielaData } from "@/lib/quinielaStore";
-import { scrapeQuinielaHoy } from "@/scripts/scrapeQuiniela";
+import { scrapeQuiniela } from "@/scripts/scrapeQuiniela";
 
 export async function GET() {
   try {
     console.log("🔎 Actualizando quiniela en tiempo real...");
 
-    const scraped = await scrapeQuinielaHoy();
+    const scraped = await scrapeQuiniela();
 
     if (scraped) {
       await setQuinielaData(scraped);

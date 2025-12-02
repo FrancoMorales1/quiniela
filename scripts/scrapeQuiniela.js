@@ -1,9 +1,10 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 
-export async function scrapeQuinielaHoy() {
+export async function scrapeQuiniela() {
   try {
-    const url = "https://quinieladehoy.com/";
+    const url = "https://www.jugandoonline.com.ar/rHome.aspx";
+
     const { data } = await axios.get(url, {
       headers: { "User-Agent": "Mozilla/5.0" },
     });
@@ -12,49 +13,54 @@ export async function scrapeQuinielaHoy() {
 
     const categorias = ["PREVIA", "PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA"];
 
-    // Resultado final
     const resultados = {
-      Provincia: {},
-      Ciudad: {},
+      Provincia: {
+        PREVIA: null,
+        PRIMERA: null,
+        MATUTINA: null,
+        VESPERTINA: null,
+        NOCTURNA: null,
+      },
+      Ciudad: {
+        PREVIA: null,
+        PRIMERA: null,
+        MATUTINA: null,
+        VESPERTINA: null,
+        NOCTURNA: null,
+      }
     };
 
-    // Recorremos todas las provincias
-    $("span.lrd-provincia-text").each((i, span) => {
-      const texto = $(span).text().trim();
+    // La tabla principal de resultados en JugandoOnline es la primera tabla grande
+    const tabla = $("table").first();
+
+    tabla.find("tr").each((i, tr) => {
+      const cols = $(tr).find("td");
+      if (cols.length < 6) return; // nombre + 5 sorteos
+
+      const region = $(cols[0]).text().trim().toLowerCase();
 
       let tipo = null;
-
-      if (/provincia de buenos aires/i.test(texto)) tipo = "Provincia";
-      if (/ciudad de buenos aires|caba/i.test(texto)) tipo = "Ciudad";
+      if (/ciudad/i.test(region) || /caba/i.test(region)) tipo = "Ciudad";
+      if (/provincia/i.test(region)) tipo = "Provincia";
 
       if (!tipo) return;
 
-      const fila = $(span).closest("tr");
+      cols.each((j, td) => {
+        if (j === 0) return;
 
-      // Extraemos las 5 celdas de resultados
-      const celdas = fila.find("td.lrd-resultado-cell");
+        const nombreCategoria = categorias[j - 1];
+        if (!nombreCategoria) return;
 
-      celdas.each((index, celda) => {
-        const categoria = categorias[index];
-        if (!categoria) return;
+        const numero = $(td).text().trim() || null;
 
-        // El número está siempre primero en la celda
-        const data = $(celda)
-          .text()
-          .split("\n")
-          .map(t => t.trim())
-          .filter(t => t.length > 0);
-
-        const numero = data[0] || null;
-
-        resultados[tipo][categoria] = numero;
+        resultados[tipo][nombreCategoria] = numero;
       });
     });
 
     return resultados;
 
   } catch (error) {
-    console.error("Error scraping QuinielaDeHoy:", error);
+    console.error("Error scraping JugandoOnline:", error);
     return null;
   }
 }
