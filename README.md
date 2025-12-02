@@ -19,7 +19,7 @@ No posee licencia: podés usarlo, modificarlo o compartirlo libremente.
 
 ## 🌐 Enlace al sitio
 Si a alguien le sirve, podés acceder acá:  
-**[enlace](enlace)**
+**[https://quiniela-rust.vercel.app/](https://quiniela-rust.vercel.app/)**
 
 ---
 
