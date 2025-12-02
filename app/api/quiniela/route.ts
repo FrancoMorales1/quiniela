@@ -1,19 +1,40 @@
 import { NextResponse } from "next/server";
-import { getQuinielaData } from "@/lib/quinielaStore";
+import { getQuinielaData, setQuinielaData } from "@/lib/quinielaStore";
+import { scrapeQuinielaHoy } from "@/scripts/scrapeQuiniela";
 
 export async function GET() {
-  const data = await getQuinielaData();
+  try {
+    console.log("🔎 Actualizando quiniela en tiempo real...");
 
-  if (!data || !data.resultados) {
+    const scraped = await scrapeQuinielaHoy();
+
+    if (scraped) {
+      await setQuinielaData(scraped);
+      console.log("✔ Datos actualizados en Supabase");
+    } else {
+      console.log("❌ No se pudieron obtener datos nuevos");
+    }
+
+    const data = await getQuinielaData();
+
+    if (!data || !data.resultados) {
+      return NextResponse.json(
+        {
+          error: "Datos no disponibles aún",
+          resultados: {},
+          timestamp: null,
+        },
+        { status: 503 }
+      );
+    }
+
+    return NextResponse.json(data, { status: 200 });
+
+  } catch (error) {
+    console.error("💥 Error en /api/quiniela:", error);
     return NextResponse.json(
-      {
-        error: "Datos no disponibles aún",
-        resultados: {},
-        timestamp: null,
-      },
-      { status: 503 }
+      { error: "Error interno del servidor" },
+      { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 200 });
 }

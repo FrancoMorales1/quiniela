@@ -7,7 +7,7 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function Home() {
   const { data, error, isLoading } = useSWR("/api/quiniela", fetcher, {
-    refreshInterval: 30000,
+    refreshInterval: 300000,
   });
 
   if (!data || isLoading) {
