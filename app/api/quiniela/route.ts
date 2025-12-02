@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { getQuinielaData } from "@/lib/quinielaStore";
 
 export async function GET() {
-  const data = getQuinielaData();    
+  const data = await getQuinielaData();
+
   if (!data || !data.resultados) {
     return NextResponse.json(
       {
